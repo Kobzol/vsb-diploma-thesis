@@ -21,7 +21,8 @@ namespace tless {
         size_t size = 0;  //!< Size of hash table (in terms of number of templates)
         Triplet triplet;
         std::vector<cv::Range> binRanges;
-        std::unordered_map<HashKey, std::vector<Template *>, HashKeyHasher> templates;
+        //std::unordered_map<HashKey, std::vector<Template *>, HashKeyHasher> templates;
+        std::vector<std::vector<Template*>> templates{65536};
 
         HashTable() = default;
         HashTable(Triplet triplet) : triplet(triplet) {}

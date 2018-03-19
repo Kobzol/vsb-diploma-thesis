@@ -3,23 +3,13 @@
 namespace tless {
     void HashTable::pushUnique(const HashKey &key, Template &t) {
         // Check if key exists, if not initialize it
-        if (templates.find(key) == templates.end()) {
-            std::vector<Template *> hashTemplates;
-            templates[key] = hashTemplates;
-
-            // Push new template
-            templates[key].emplace_back(&t);
+        auto& vec = templates[key.hash()];
+        auto found = std::find_if(vec.begin(), vec.end(),
+                                  [&t](const Template *tt) { return t == *tt; });
+        if (found == vec.end())
+        {
+            vec.push_back(&t);
             size++;
-        } else {
-            // Check for duplicates and push unique
-            auto found = std::find_if(templates[key].begin(), templates[key].end(),
-                                      [&t](const Template *tt) { return t == *tt; });
-
-            // If duplicate not found, push new template
-            if (found == templates[key].end()) {
-                templates[key].emplace_back(&t);
-                size++;
-            }
         }
     }
 
@@ -35,11 +25,11 @@ namespace tless {
 
         os << "Table contents: (d1, d2, n1, n2, n3)" << std::endl;
         for (const auto &entry : table.templates) {
-            os << "  |_ " << entry.first << " : (";
+            /*os << "  |_ " << entry.first << " : (";
             for (const auto &item : entry.second) {
                 os << item->id << ", ";
             }
-            os << ")" << std::endl;
+            os << ")" << std::endl;*/
         }
 
         return os;
@@ -123,18 +113,18 @@ namespace tless {
             // Save key
             fs << "{";
             fs << "key" << "{";
-            fs << "d1" << tableRow.first.d1;
+            /*fs << "d1" << tableRow.first.d1;
             fs << "d2" << tableRow.first.d2;
             fs << "n1" << tableRow.first.n1;
             fs << "n2" << tableRow.first.n2;
-            fs << "n3" << tableRow.first.n3;
+            fs << "n3" << tableRow.first.n3;*/
             fs << "}";
 
             // Save template IDS
             fs << "templates" << "[";
-            for (auto &t : tableRow.second) {
+            /*for (auto &t : tableRow.second) {
                 fs << static_cast<int>(t->id);
-            }
+            }*/
             fs << "]";
             fs << "}";
         }

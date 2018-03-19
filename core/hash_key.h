@@ -6,6 +6,17 @@
 #include <boost/functional/hash.hpp>
 
 namespace tless {
+    // TODO: create pre-compiled table
+    inline size_t hashValue(uchar value)
+    {
+        for (int i = 0; i < 31; i++)
+        {
+            if (value & (1 << i)) return i;
+        }
+
+        return 0;
+    }
+
     /**
      * @brief Custom hash key used in hash tables to quickly identify set of valid candidates for each Window.
      *
@@ -33,6 +44,14 @@ namespace tless {
         bool operator==(const HashKey &rhs) const;
         bool operator!=(const HashKey &rhs) const;
         friend std::ostream &operator<<(std::ostream &os, const HashKey &key);
+
+        size_t hash() const
+        {
+            size_t value = (hashValue(d1) << 12) | (hashValue(d2) << 9) | (hashValue(n1) << 6)
+                   | (hashValue(n2) << 3) | hashValue(d1);
+            assert(value < (1 << 16));
+            return value;
+        }
     };
 
     struct HashKeyHasher {
